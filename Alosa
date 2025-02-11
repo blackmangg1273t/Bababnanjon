@@ -1,0 +1,384 @@
+-- 📌 استيراد الخدمات
+local TweenService = game:GetService("TweenService")
+local UserInputService = game:GetService("UserInputService")
+local HttpService = game:GetService("HttpService")
+local Players = game:GetService("Players")
+
+-- 📌 إنشاء الواجهة الرئيسية
+local screenGui = Instance.new("ScreenGui")
+screenGui.Parent = Players.LocalPlayer:WaitForChild("PlayerGui")
+
+local frameSize = UDim2.new(0.7, 0, 0.7, 0) -- حجم الواجهة
+
+local mainFrame = Instance.new("Frame")
+mainFrame.Size = frameSize
+mainFrame.Position = UDim2.new(0.15, 0, 1, 0) -- تبدأ مخفية أسفل الشاشة
+mainFrame.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+mainFrame.BorderSizePixel = 0
+mainFrame.ClipsDescendants = true
+mainFrame.Active = true 
+mainFrame.Parent = screenGui
+
+-- 🔹 إضافة حواف منحنية للواجهة الرئيسية 🔹
+local mainFrameCorner = Instance.new("UICorner")
+mainFrameCorner.CornerRadius = UDim.new(0, 20)
+mainFrameCorner.Parent = mainFrame
+
+-- 🔹 إنشاء الصورة بحواف 🔹
+local imageLabel = Instance.new("ImageLabel")
+imageLabel.Size = UDim2.new(1, 0, 1, 0) 
+imageLabel.Position = UDim2.new(0, 0, 0, 0)
+imageLabel.Image = "rbxassetid://72240561359519"
+imageLabel.BackgroundTransparency = 1
+imageLabel.ScaleType = Enum.ScaleType.Crop
+imageLabel.Visible = false
+imageLabel.Parent = mainFrame
+
+-- 🔹 إضافة حواف منحنية للصورة 🔹
+local imageCorner = Instance.new("UICorner")
+imageCorner.CornerRadius = UDim.new(0, 20)
+imageCorner.Parent = imageLabel
+
+-- 🔹 نص "اختر اللغة" 🔹
+local chooseLanguageText = Instance.new("TextLabel")
+chooseLanguageText.Size = UDim2.new(1, 0, 0.15, 0)
+chooseLanguageText.Position = UDim2.new(0, 0, 0.1, 0)
+chooseLanguageText.Text = "اختر اللغة"
+chooseLanguageText.TextColor3 = Color3.fromRGB(255, 255, 255)
+chooseLanguageText.TextSize = 40
+chooseLanguageText.Font = Enum.Font.SourceSansBold
+chooseLanguageText.BackgroundTransparency = 1
+chooseLanguageText.Visible = false
+chooseLanguageText.Parent = mainFrame
+
+-- 🔹 نص "By: Crozo HUB" 🔹
+local crozoText = Instance.new("TextLabel")
+crozoText.Size = UDim2.new(1, 0, 0.1, 0)
+crozoText.Position = UDim2.new(0, 0, 0.25, 0) -- أسفل العنوان
+crozoText.Text = "By: Crozo HUB"
+crozoText.TextColor3 = Color3.fromRGB(255, 255, 255)
+crozoText.TextSize = 30
+crozoText.Font = Enum.Font.SourceSansBold
+crozoText.BackgroundTransparency = 1
+crozoText.Visible = false
+crozoText.Parent = mainFrame
+
+-- 🔹 زر اللغة العربية 🔹
+local arabicButton = Instance.new("TextButton")
+arabicButton.Size = UDim2.new(0.4, 0, 0.15, 0)
+arabicButton.Position = UDim2.new(0.1, 0, 0.7, 0)
+arabicButton.Text = "العربية"
+arabicButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+arabicButton.TextSize = 35
+arabicButton.Font = Enum.Font.SourceSansBold
+arabicButton.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+arabicButton.BorderSizePixel = 0
+arabicButton.Visible = false
+arabicButton.Parent = mainFrame
+
+-- 🔹 إضافة حواف منحنية لزر اللغة العربية 🔹
+local arabicButtonCorner = Instance.new("UICorner")
+arabicButtonCorner.CornerRadius = UDim.new(0, 20)
+arabicButtonCorner.Parent = arabicButton
+
+-- 🔹 زر اللغة الإنجليزية 🔹
+local englishButton = Instance.new("TextButton")
+englishButton.Size = UDim2.new(0.4, 0, 0.15, 0)
+englishButton.Position = UDim2.new(0.5, 0, 0.7, 0)
+englishButton.Text = "English"
+englishButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+englishButton.TextSize = 35
+englishButton.Font = Enum.Font.SourceSansBold
+englishButton.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+englishButton.BorderSizePixel = 0
+englishButton.Visible = false
+englishButton.Parent = mainFrame
+
+-- 🔹 إضافة حواف منحنية لزر اللغة الإنجليزية 🔹
+local englishButtonCorner = Instance.new("UICorner")
+englishButtonCorner.CornerRadius = UDim.new(0, 20)
+englishButtonCorner.Parent = englishButton
+
+-- 🔹 أنيميشن تحريك الواجهة 🔹
+local function animatePopup(frame, targetPosition, duration)
+    local tweenInfo = TweenInfo.new(duration, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
+    local positionTween = TweenService:Create(frame, tweenInfo, {Position = targetPosition})
+    positionTween:Play()
+end
+
+-- 🔹 إظهار خيارات اللغة 🔹
+local function showLanguageOptions()
+    local tweenInfo = TweenInfo.new(0.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
+    local hideImageTween = TweenService:Create(imageLabel, tweenInfo, {ImageTransparency = 1})
+    hideImageTween:Play()
+
+    chooseLanguageText.Visible = true
+    crozoText.Visible = true
+    arabicButton.Visible = true
+    englishButton.Visible = true
+
+    TweenService:Create(chooseLanguageText, tweenInfo, {TextTransparency = 0}):Play()
+    TweenService:Create(crozoText, tweenInfo, {TextTransparency = 0}):Play()
+    TweenService:Create(arabicButton, tweenInfo, {BackgroundTransparency = 0}):Play()
+    TweenService:Create(englishButton, tweenInfo, {BackgroundTransparency = 0}):Play()
+end
+
+-- 🔹 إنشاء واجهة المفتاح (بالعربية) 🔹
+local function createArabicKeyInterface()
+    local keyFrame = Instance.new("Frame")
+    keyFrame.Size = UDim2.new(0.5, 0, 0.4, 0) -- حجم أصغر
+    keyFrame.Position = UDim2.new(0.25, 0, 0.3, 0) -- وضع في المنتصف
+    keyFrame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+    keyFrame.BorderSizePixel = 0
+    keyFrame.ClipsDescendants = true
+    keyFrame.Parent = screenGui
+
+    local keyFrameCorner = Instance.new("UICorner")
+    keyFrameCorner.CornerRadius = UDim.new(0, 20)
+    keyFrameCorner.Parent = keyFrame
+
+    local keyTitle = Instance.new("TextLabel")
+    keyTitle.Size = UDim2.new(1, 0, 0.2, 0)
+    keyTitle.Position = UDim2.new(0, 0, 0.05, 0)
+    keyTitle.Text = "نظام المفتاح"
+    keyTitle.TextColor3 = Color3.fromRGB(255, 255, 255)
+    keyTitle.TextSize = 25
+    keyTitle.Font = Enum.Font.SourceSansBold
+    keyTitle.BackgroundTransparency = 1
+    keyTitle.Parent = keyFrame
+
+    local keyBox = Instance.new("TextBox")
+    keyBox.Size = UDim2.new(0.8, 0, 0.2, 0)
+    keyBox.Position = UDim2.new(0.1, 0, 0.3, 0)
+    keyBox.PlaceholderText = "أدخل المفتاح هنا"
+    keyBox.Text = ""
+    keyBox.TextColor3 = Color3.fromRGB(255, 255, 255)
+    keyBox.TextSize = 20
+    keyBox.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+    keyBox.BorderSizePixel = 0
+    keyBox.Parent = keyFrame
+
+    local keyBoxCorner = Instance.new("UICorner")
+    keyBoxCorner.CornerRadius = UDim.new(0, 10)
+    keyBoxCorner.Parent = keyBox
+
+    local copyButton = Instance.new("TextButton")
+    copyButton.Size = UDim2.new(0.3, 0, 0.2, 0)
+    copyButton.Position = UDim2.new(0.35, 0, 0.6, 0)
+    copyButton.Text = "نسخ الرابط"
+    copyButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+    copyButton.TextSize = 18
+    copyButton.BackgroundColor3 = Color3.fromRGB(70, 70, 70)
+    copyButton.BorderSizePixel = 0
+    copyButton.Parent = keyFrame
+
+    local copyButtonCorner = Instance.new("UICorner")
+    copyButtonCorner.CornerRadius = UDim.new(0, 10)
+    copyButtonCorner.Parent = copyButton
+
+    -- 🔹 وظيفة نسخ الرابط 🔹
+    copyButton.MouseButton1Click:Connect(function()
+        local keyLink = "https://example.com/key" -- رابط المفتاح
+        setclipboard(keyLink)
+        local notification = Instance.new("TextLabel")
+        notification.Size = UDim2.new(0.5, 0, 0.1, 0)
+        notification.Position = UDim2.new(0.25, 0, 0.8, 0)
+        notification.Text = "تم نسخ الرابط إلى الحافظة"
+        notification.TextColor3 = Color3.fromRGB(255, 255, 255)
+        notification.TextSize = 18
+        notification.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+        notification.BorderSizePixel = 0
+        notification.Parent = keyFrame
+
+        local notificationCorner = Instance.new("UICorner")
+        notificationCorner.CornerRadius = UDim.new(0, 10)
+        notificationCorner.Parent = notification
+
+        wait(2)
+        notification:Destroy()
+    end)
+
+    -- 🔹 وظيفة التحقق من المفتاح 🔹
+    keyBox.FocusLost:Connect(function()
+        local correctKey = "1234" -- المفتاح الصحيح
+        if keyBox.Text == correctKey then
+            local notification = Instance.new("TextLabel")
+            notification.Size = UDim2.new(0.5, 0, 0.1, 0)
+            notification.Position = UDim2.new(0.25, 0, 0.8, 0)
+            notification.Text = "المفتاح صحيح!"
+            notification.TextColor3 = Color3.fromRGB(0, 255, 0)
+            notification.TextSize = 18
+            notification.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+            notification.BorderSizePixel = 0
+            notification.Parent = keyFrame
+
+            local notificationCorner = Instance.new("UICorner")
+            notificationCorner.CornerRadius = UDim.new(0, 10)
+            notificationCorner.Parent = notification
+
+            wait(2)
+            keyFrame:Destroy()
+            mainFrame:Destroy()
+            -- 🔹 تشغيل السكربت هنا 🔹
+            print("تم تشغيل السكربت!")loadstring(game:HttpGet("https://pastebin.com/raw/GUxKEnL7"))()
+        else
+            local notification = Instance.new("TextLabel")
+            notification.Size = UDim2.new(0.5, 0, 0.1, 0)
+            notification.Position = UDim2.new(0.25, 0, 0.8, 0)
+            notification.Text = "المفتاح خاطئ!"
+            notification.TextColor3 = Color3.fromRGB(255, 0, 0)
+            notification.TextSize = 18
+            notification.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+            notification.BorderSizePixel = 0
+            notification.Parent = keyFrame
+
+            local notificationCorner = Instance.new("UICorner")
+            notificationCorner.CornerRadius = UDim.new(0, 10)
+            notificationCorner.Parent = notification
+
+            wait(2)
+            notification:Destroy()
+        end
+    end)
+end
+
+-- 🔹 إنشاء واجهة المفتاح (بالإنجليزية) 🔹
+local function createEnglishKeyInterface()
+    local keyFrame = Instance.new("Frame")
+    keyFrame.Size = UDim2.new(0.5, 0, 0.4, 0) -- حجم أصغر
+    keyFrame.Position = UDim2.new(0.25, 0, 0.3, 0) -- وضع في المنتصف
+    keyFrame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+    keyFrame.BorderSizePixel = 0
+    keyFrame.ClipsDescendants = true
+    keyFrame.Parent = screenGui
+
+    local keyFrameCorner = Instance.new("UICorner")
+    keyFrameCorner.CornerRadius = UDim.new(0, 20)
+    keyFrameCorner.Parent = keyFrame
+
+    local keyTitle = Instance.new("TextLabel")
+    keyTitle.Size = UDim2.new(1, 0, 0.2, 0)
+    keyTitle.Position = UDim2.new(0, 0, 0.05, 0)
+    keyTitle.Text = "Key System"
+    keyTitle.TextColor3 = Color3.fromRGB(255, 255, 255)
+    keyTitle.TextSize = 25
+    keyTitle.Font = Enum.Font.SourceSansBold
+    keyTitle.BackgroundTransparency = 1
+    keyTitle.Parent = keyFrame
+
+    local keyBox = Instance.new("TextBox")
+    keyBox.Size = UDim2.new(0.8, 0, 0.2, 0)
+    keyBox.Position = UDim2.new(0.1, 0, 0.3, 0)
+    keyBox.PlaceholderText = "Enter the key here"
+    keyBox.Text = ""
+    keyBox.TextColor3 = Color3.fromRGB(255, 255, 255)
+    keyBox.TextSize = 20
+    keyBox.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+    keyBox.BorderSizePixel = 0
+    keyBox.Parent = keyFrame
+
+    local keyBoxCorner = Instance.new("UICorner")
+    keyBoxCorner.CornerRadius = UDim.new(0, 10)
+    keyBoxCorner.Parent = keyBox
+
+    local copyButton = Instance.new("TextButton")
+    copyButton.Size = UDim2.new(0.3, 0, 0.2, 0)
+    copyButton.Position = UDim2.new(0.35, 0, 0.6, 0)
+    copyButton.Text = "Copy Link"
+    copyButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+    copyButton.TextSize = 18
+    copyButton.BackgroundColor3 = Color3.fromRGB(70, 70, 70)
+    copyButton.BorderSizePixel = 0
+    copyButton.Parent = keyFrame
+
+    local copyButtonCorner = Instance.new("UICorner")
+    copyButtonCorner.CornerRadius = UDim.new(0, 10)
+    copyButtonCorner.Parent = copyButton
+
+    -- 🔹 وظيفة نسخ الرابط 🔹
+    copyButton.MouseButton1Click:Connect(function()
+        local keyLink = "https://example.com/key" -- رابط المفتاح
+        setclipboard(keyLink)
+        local notification = Instance.new("TextLabel")
+        notification.Size = UDim2.new(0.5, 0, 0.1, 0)
+        notification.Position = UDim2.new(0.25, 0, 0.8, 0)
+        notification.Text = "Link copied to clipboard!"
+        notification.TextColor3 = Color3.fromRGB(255, 255, 255)
+        notification.TextSize = 18
+        notification.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+        notification.BorderSizePixel = 0
+        notification.Parent = keyFrame
+
+        local notificationCorner = Instance.new("UICorner")
+        notificationCorner.CornerRadius = UDim.new(0, 10)
+        notificationCorner.Parent = notification
+
+        wait(2)
+        notification:Destroy()
+    end)
+
+    -- 🔹 وظيفة التحقق من المفتاح 🔹
+    keyBox.FocusLost:Connect(function()
+        local correctKey = "1234" -- المفتاح الصحيح
+        if keyBox.Text == correctKey then
+            local notification = Instance.new("TextLabel")
+            notification.Size = UDim2.new(0.5, 0, 0.1, 0)
+            notification.Position = UDim2.new(0.25, 0, 0.8, 0)
+            notification.Text = "Key is correct!"
+            notification.TextColor3 = Color3.fromRGB(0, 255, 0)
+            notification.TextSize = 18
+            notification.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+            notification.BorderSizePixel = 0
+            notification.Parent = keyFrame
+
+            local notificationCorner = Instance.new("UICorner")
+            notificationCorner.CornerRadius = UDim.new(0, 10)
+            notificationCorner.Parent = notification
+
+            wait(2)
+            keyFrame:Destroy()
+            mainFrame:Destroy()
+            -- 🔹 تشغيل السكربت هنا 🔹
+            print("Script executed!")
+        else
+            local notification = Instance.new("TextLabel")
+            notification.Size = UDim2.new(0.5, 0, 0.1, 0)
+            notification.Position = UDim2.new(0.25, 0, 0.8, 0)
+            notification.Text = "Key is incorrect!"
+            notification.TextColor3 = Color3.fromRGB(255, 0, 0)
+            notification.TextSize = 18
+            notification.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+            notification.BorderSizePixel = 0
+            notification.Parent = keyFrame
+
+            local notificationCorner = Instance.new("UICorner")
+            notificationCorner.CornerRadius = UDim.new(0, 10)
+            notificationCorner.Parent = notification
+
+            wait(2)
+            notification:Destroy()
+        end
+    end)
+end
+
+-- 🔹 تفعيل أنيميشن الواجهة 🔹
+animatePopup(mainFrame, UDim2.new(0.15, 0, 0.15, 0), 1)
+wait(0.5)
+
+imageLabel.Visible = true
+TweenService:Create(imageLabel, TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {ImageTransparency = 0}):Play()
+
+wait(3)
+showLanguageOptions()
+
+-- 🔹 تفعيل الواجهة عند الضغط على الزر العربي 🔹
+arabicButton.MouseButton1Click:Connect(function()
+    mainFrame.Visible = false
+    createArabicKeyInterface()
+end)
+
+-- 🔹 تفعيل الواجهة عند الضغط على الزر الإنجليزي 🔹
+englishButton.MouseButton1Click:Connect(function()
+    mainFrame.Visible = false
+    createEnglishKeyInterface()
+end)
