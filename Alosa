@@ -200,7 +200,7 @@ local function createArabicKeyInterface()
 
     -- 🔹 وظيفة التحقق من المفتاح 🔹
     keyBox.FocusLost:Connect(function()
-        local correctKey = "1234" -- المفتاح الصحيح
+        local correctKey = "636sCROZOzx1" -- المفتاح الصحيح
         if keyBox.Text == correctKey then
             local notification = Instance.new("TextLabel")
             notification.Size = UDim2.new(0.5, 0, 0.1, 0)
